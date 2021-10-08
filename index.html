@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,
+    initial-scale=1.0">
+    <title>Avatar Grabber</title>
+    <link rel="stylesheet" href="CSS/style.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+</head>
+<body>
+    <nav>
+        <div class="logo">Reddit Avatar Grabber</div>
+        <div class="nav-items">
+            <a href="https://github.com/michal2sab">Help</a>
+        </div>
+    </nav>
+    <section class="grabber">
+        <div class="grabber-container">
+            <div class="column-left">
+                <h1>Grab any reddit user's profile picture link</h1>
+                <p>By Michal2SAB</p>
+                <div style="margin:0 auto" align=center>
+                    <form onsubmit="loadAvatar();return false">
+                        <label for="rname" class="lname">Reddit Username</label><br>
+                        <input type="text" id="rname" name="rname"><br>
+                        <input type="submit" id="rbutton" value="Grab User Avatar">
+                    </form>
+                    <script>
+                        function Get(RUrl){
+                            var Httpreq = new XMLHttpRequest(); // a new request
+                            Httpreq.open("GET",RUrl,false);
+                            Httpreq.send(null);
+                            return Httpreq.responseText;     
+                        }
+                        function loadAvatar() {
+                            let myuser = document.getElementById("rname").value;
+                            let myurl = "http://www.reddit.com/user/" + myuser + "/about.json";
+                            var json_obj = JSON.parse(Get(myurl));
+                            
+                            if (json_obj.error) {
+                                showBox("ERROR", `<p>${myuser} doesn't exist on reddit.</p>`, [
+                                    {
+                                        label: "OK",
+                                        onClick: windw => {  
+                                        },
+                                        triggerClose: true
+                                    }
+                                ]);
+                            }
+
+                            else if (!json_obj.data.icon_img) {
+                                showBox("ERROR", `<p>Couldn't lookup ${myuser}'s profile picture. User is probably banned.</p>`, [
+                                    {
+                                        label: "OK",
+                                        onClick: windw => {  
+                                        },
+                                        triggerClose: true
+                                    }
+                                ]);
+
+                            } else {
+                                cutoutImg = json_obj.data.icon_img.split('?')[0];
+                                showBox(myuser + "'s Profile Picture", `
+                                <p>${cutoutImg}</p><img src="${cutoutImg}">`, [
+                                    {
+                                        label: "Save Image",
+                                        onClick: windw => {  
+                                            var link = document.createElement("a");
+                                            link.href = cutoutImg;
+                                            link.download = myuser + ".png";
+                                            document.body.appendChild(link);
+                                            link.click();
+                                            document.body.removeChild(link);
+                                            delete link;
+                                        },
+                                    }
+                                ]);
+                            }
+                        }
+                    </script>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script src="js/main.js"></script>
+</body>
+</head>
+</html>
