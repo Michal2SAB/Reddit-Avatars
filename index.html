@@ -35,7 +35,7 @@
                         }
                         function loadAvatar() {
                             let myuser = document.getElementById("rname").value;
-                            let myurl = "http://www.reddit.com/user/" + myuser + "/about.json";
+                            let myurl = "https://www.reddit.com/user/" + myuser + "/about.json";
                             var json_obj = JSON.parse(Get(myurl));
                             
                             if (json_obj.error) {
